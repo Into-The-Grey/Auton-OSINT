@@ -1,0 +1,3 @@
+email_verification:
+  xposed_timeout: 15
+  h8mail_timeout: 30

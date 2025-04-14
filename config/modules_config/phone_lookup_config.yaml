@@ -1,0 +1,3 @@
+phoneinfoga:
+  executable_path: "/usr/local/bin/phoneinfoga"
+  timeout: 30

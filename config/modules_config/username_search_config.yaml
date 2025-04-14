@@ -1,0 +1,5 @@
+username_search:
+  maigret_timeout: 120
+  sherlock_timeout: 90
+  use_tor: false
+  permute: false

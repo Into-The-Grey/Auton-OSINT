@@ -1,0 +1,38 @@
+domain_ip_lookup:
+  use_tor: false  # if needed in future for anonymized requests
+
+  features:
+    whois:
+      is_enabled: true
+      provider: "python-whois"  # Local Python package, no API key required
+
+    dns_records:
+      is_enabled: true
+      types: ["A", "AAAA", "MX", "NS", "CNAME", "TXT", "SOA"]
+
+    reverse_dns:
+      is_enabled: true
+
+    ip_geolocation:
+      is_enabled: true
+      provider: "ip-api.com"  # Free API with rate limit (~45 req/min)
+      endpoint: "http://ip-api.com/json/{ip}"
+
+    asn_lookup:
+      is_enabled: true
+      provider: "iptoasn.com"  # Free endpoint
+      endpoint: "https://api.iptoasn.com/v1/as/ip/{ip}"
+
+    blacklist_check:
+      is_enabled: true
+      providers:
+        - name: "AbuseIPDB"
+          enabled: false
+          note: "Requires free API key at abuseipdb.com"
+          endpoint: "https://api.abuseipdb.com/api/v2/check"
+          headers:
+            Key-Header: "Key"
+          rate_limit: "1000/day free"
+
+  headers:
+    user_agent: "Mozilla/5.0 (Auton-OSINT)"

@@ -1,0 +1,12 @@
+tor_darkweb:
+  is_enabled: true  # Global toggle for all TOR-based modules
+  systemctl_service: "tor"  # Name of the systemctl service to control TOR
+  proxy_url: "socks5h://127.0.0.1:9050"  # Proxy used to connect via TOR
+
+  scan_settings:
+    test_sites:  # These are checked to verify if TOR is working
+      - "http://expyuzz4wqqyqhjn.onion"
+      - "http://msydqstlz2kzerdg.onion"
+    timeout: 10  # Seconds to wait per connection attempt
+    retries: 2  # Number of retries before marking a site unreachable
+    validate_https: false  # Some .onion sites use self-signed certs

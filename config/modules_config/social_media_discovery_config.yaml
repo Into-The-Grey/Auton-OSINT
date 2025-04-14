@@ -1,0 +1,130 @@
+social_media_discovery:
+  enable_tor: false  # will be migrated to tor_darkweb_config.yaml
+  facial_recognition:
+    is_enabled: false
+    provider: "pimeyes"
+    note: "Stubbed for future integration."
+
+  platforms:
+    badoo:
+      is_enabled: true
+      url_pattern: "https://www.badoo.com/en/{username}/"
+    bandcamp:
+      is_enabled: true
+      url_pattern: "https://bandcamp.com/{username}"
+    behance:
+      is_enabled: true
+      url_pattern: "https://www.behance.net/{username}"
+    bumble:
+      is_enabled: true
+      url_pattern: "https://bumble.com/{username}"
+    dailymotion:
+      is_enabled: true
+      url_pattern: "https://www.dailymotion.com/{username}"
+    deviantart:
+      is_enabled: true
+      url_pattern: "https://www.deviantart.com/{username}"
+    discord:
+      is_enabled: true
+      url_pattern: "https://discord.com/users/{username}"
+      discriminator: "{discriminator}"  # Optional field for Discord user identification
+    dribbble:
+      is_enabled: true
+      url_pattern: "https://dribbble.com/{username}"
+    facebook:
+      is_enabled: true
+      url_pattern: "https://www.facebook.com/{user_id}"  # Facebook uses user_id instead of username. This is because Facebook profiles are primarily identified by user IDs, and usernames are not always available or unique.
+    fansly:
+      is_enabled: true
+      url_pattern: "https://fansly.com/{username}"
+    flickr:
+      is_enabled: true
+      url_pattern: "https://www.flickr.com/photos/{username}"
+    github:
+      is_enabled: true
+      url_pattern: "https://github.com/{username}"
+    goodreads:
+      is_enabled: true
+      url_pattern: "https://www.goodreads.com/user/show/{username}"
+    hinge:
+      is_enabled: true
+      url_pattern: "https://hinge.co/{username}"
+    instagram:
+      is_enabled: true
+      url_pattern: "https://www.instagram.com/{username}"
+    justfor.fans:
+      is_enabled: true
+      url_pattern: "https://justfor.fans/{username}"
+    lastfm:
+      is_enabled: true
+      url_pattern: "https://www.last.fm/user/{username}"
+    linkedin:
+      is_enabled: false
+      url_pattern: "https://www.linkedin.com/in/{username}"
+    meetup:
+      is_enabled: true
+      url_pattern: "https://www.meetup.com/members/{user_id}/"
+    mixcloud: 
+      is_enabled: true
+      url_pattern: "https://www.mixcloud.com/{username}"
+    myspace:
+      is_enabled: true
+      url_pattern: "https://myspace.com/{username}"
+    okcupid:
+      is_enabled: true
+      url_pattern: "https://www.okcupid.com/profile/{username}"
+    onlyfans:
+      is_enabled: true
+      url_pattern: "https://onlyfans.com/{username}"
+    periscope:
+      is_enabled: true
+      url_pattern: "https://www.pscp.tv/{username}"
+    pinterest:
+      is_enabled: true
+      url_pattern: "https://www.pinterest.com/{username}"
+    plentyoffish:
+      is_enabled: true
+      url_pattern_userid: "https://www.pof.com/member.aspx?id={user_id}"
+      url_pattern_username: "https://www.pof.com/{username}"  # Added support for custom usernames
+      note: "Supports both user_id and username. Ensure the correct field is used programmatically."
+    quora:
+      is_enabled: true
+      url_pattern: "https://www.quora.com/profile/{username}"
+    reddit:
+      is_enabled: true
+      url_pattern: "https://www.reddit.com/user/{username}"
+    snapchat:
+      is_enabled: true
+      url_pattern: "https://www.snapchat.com/add/{username}"
+    soundcloud:
+      is_enabled: true
+      url_pattern: "https://soundcloud.com/{username}"
+    telegram:
+      is_enabled: true
+      url_pattern: "https://t.me/{username}"
+    tiktok:
+      is_enabled: true
+      url_pattern: "https://www.tiktok.com/@{username}"
+    twitch:
+      is_enabled: true
+      url_pattern: "https://www.twitch.tv/{username}"
+    twitter:
+      is_enabled: true
+      url_pattern: "https://twitter.com/{username}"
+    vimeo:
+      is_enabled: true
+      url_pattern: "https://vimeo.com/{user_id}"
+    vk:
+      is_enabled: true
+      url_pattern: "https://vk.com/{username}"
+    weibo:
+      is_enabled: true
+      url_pattern: "https://weibo.com/{username}"
+    yelp:
+      is_enabled: true
+      url_pattern_userid: "https://www.yelp.com/user_details?userid={user_id}"
+      url_pattern_username: "https://www.yelp.com/user/{username}"  # Added support for custom usernames
+      note: "Supports both user_id and username. Ensure the correct field is used programmatically."
+    youtube:
+      is_enabled: true
+      url_pattern: "https://www.youtube.com/@{username}"
