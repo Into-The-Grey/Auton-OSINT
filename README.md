@@ -30,7 +30,7 @@
 ## 🛠️ Quick Start
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/auton-osint.git
+git clone https://github.com/Into_The_Grey/auton-osint.git
 cd auton-osint
 python3 main.py --help
 ```
