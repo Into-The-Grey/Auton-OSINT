@@ -7,6 +7,10 @@ from pathlib import Path
 from datetime import datetime
 from .utils import parse_phoneinfoga_output
 
+def mask_phone_number(phone_number):
+    if len(phone_number) > 4:
+        return phone_number[:2] + '*' * (len(phone_number) - 4) + phone_number[-2:]
+    return phone_number
 # Load configuration
 CONFIG_PATH = (
     Path(__file__).parents[2] / "config/modules_config/phone_lookup_config.yaml"
@@ -56,8 +60,9 @@ def phone_lookup(phone_number):
         with open(filename, "w") as json_file:
             json.dump(structured_data, json_file, indent=4)
 
+        masked_number = mask_phone_number(phone_number)
         logging.info(
-            f"Phone lookup and parsing successful for: {phone_number}, results saved in {filename}"
+            f"Phone lookup and parsing successful for: {masked_number}, results saved in {filename}"
         )
         return structured_data
 
