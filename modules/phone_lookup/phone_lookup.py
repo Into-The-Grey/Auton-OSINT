@@ -62,7 +62,7 @@ def phone_lookup(phone_number):
         return structured_data
 
     except subprocess.TimeoutExpired:
-        logging.error(f"Timeout expired for phone number: {phone_number}")
+        logging.error("Timeout expired during phone lookup.")
         return None
     except Exception as e:
         logging.exception(f"Unexpected error during phone lookup: {e}")
