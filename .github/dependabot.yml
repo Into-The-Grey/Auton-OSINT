@@ -1,0 +1,38 @@
+# .github/dependabot.yml
+version: 2
+updates:
+  # Example configuration for npm (Node.js) dependencies
+  - package-ecosystem: "npm"
+    directory: "/"             # Location of package manifests (e.g. package.json)
+    schedule:
+      interval: "weekly"       # Checks for updates once a week
+    open-pull-requests-limit: 5
+    target-branch: "main"      # Default branch to target; change if your default is different
+    versioning-strategy: "increase"  # Only allow updates that increase the version (e.g. avoiding accidental downgrades)
+    labels:
+      - "dependencies"
+    # Uncomment and adjust the ignore field if you need to skip specific packages
+    # ignore:
+    #   - dependency-name: "example-package"
+    #     versions:
+    #       - "1.x.x"
+
+  # Example configuration for pip (Python) dependencies
+  - package-ecosystem: "pip"
+    directory: "/"             # Where your requirements.txt or Pipfile resides
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 5
+    target-branch: "main"
+    versioning-strategy: "increase"
+    labels:
+      - "dependencies"
+
+  # Example configuration for Docker dependencies
+  - package-ecosystem: "docker"
+    directory: "/"             # Location of your Dockerfiles
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 5
+    labels:
+      - "dependencies"
