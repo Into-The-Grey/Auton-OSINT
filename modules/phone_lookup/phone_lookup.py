@@ -39,7 +39,7 @@ def phone_lookup(phone_number):
     ]
 
     try:
-        logging.info(f"Initiating phone lookup for: {phone_number}")
+        logging.info("Initiating phone lookup.")
         result = subprocess.run(
             command, capture_output=True, text=True, timeout=config["timeout"]
         )
