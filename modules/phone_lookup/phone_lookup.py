@@ -61,9 +61,8 @@ def phone_lookup(phone_number):
         with open(filename, "w") as json_file:
             json.dump(structured_data, json_file, indent=4)
 
-        masked_number = mask_phone_number(phone_number)
         logging.info(
-            f"Phone lookup and parsing successful for: {masked_number}, results saved in {filename}"
+            f"Phone lookup and parsing successful, results saved in {filename}"
         )
         return structured_data
 
