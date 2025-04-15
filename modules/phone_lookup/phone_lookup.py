@@ -39,8 +39,7 @@ def phone_lookup(phone_number):
     ]
 
     try:
-        masked_phone_number = mask_phone_number(phone_number)
-        logging.info(f"Initiating phone lookup for: {masked_phone_number}")
+        logging.info("Initiating phone lookup.")
         result = subprocess.run(
             command, capture_output=True, text=True, timeout=config["timeout"]
         )
