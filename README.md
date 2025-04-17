@@ -139,7 +139,7 @@ Global config file: `config/main_config.yaml`
 
 ## 📸 Demo Preview
 
-> Comming soon!
+> Comming soon! Stay tuned for a demo video showcasing Auton-OSINT's capabilities.
 
 ---
 
