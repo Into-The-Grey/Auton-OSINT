@@ -1,0 +1,17 @@
+name: Project Auto Management
+
+on:
+  issues:
+    types: [opened, closed]
+  pull_request:
+    types: [opened, closed, reopened]
+
+jobs:
+  add-to-project:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Add issue or PR to Auton-OSINT Project Board
+        uses: actions/add-to-project@v0.5.0
+        with:
+          project-url: https://github.com/users/Into-The-Grey/projects/10
+          github-token: ${{ secrets.GITHUB_TOKEN }}

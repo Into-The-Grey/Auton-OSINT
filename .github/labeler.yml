@@ -1,0 +1,13 @@
+# Auto-label pull requests by file path
+docs:
+  - "*.md"
+  - "docs/**"
+
+dependencies:
+  - "requirements.txt"
+
+ci:
+  - ".github/workflows/**"
+
+python:
+  - "**.py"

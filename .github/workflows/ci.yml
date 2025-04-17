@@ -2,9 +2,9 @@ name: CI Pipeline
 
 on:
   push:
-    branches: [ main ]
+    branches: [ master ]  # Changed from main to master
   pull_request:
-    branches: [ main ]
+    branches: [ master ]  # Changed from main to master
 
 jobs:
   test:
@@ -15,6 +15,7 @@ jobs:
     permissions:
       contents: read
       pull-requests: write
+      issues: write
 
     steps:
       - name: Check out repository
@@ -54,3 +55,13 @@ jobs:
         with:
           name: coverage-report
           path: coverage.xml
+
+      - name: Create issue on test failure
+        if: failure()
+        uses: dacbd/create-issue-action@v1
+        with:
+          title: "❌ CI Failure in `${{ github.workflow }}`"
+          body: |
+            Tests failed for commit `${{ github.sha }}` on `${{ github.ref_name }}`.
+            Please investigate the failure. Workflow: `${{ github.workflow }}`
+          labels: bug, auto-generated

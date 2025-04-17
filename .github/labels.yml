@@ -1,0 +1,24 @@
+- name: bug
+  color: d73a4a
+  description: Something isn't working
+- name: auto-generated
+  color: cfd3d7
+  description: Created automatically by CI
+- name: reviewing
+  color: 0366d6
+  description: Under manual or automated review
+- name: approved
+  color: 0e8a16
+  description: Review or test passed
+- name: dependencies
+  color: 7057ff
+  description: Dependency updates
+- name: ci
+  color: f9d0c4
+  description: Continuous Integration
+- name: docs
+  color: fef2c0
+  description: Documentation change
+- name: python
+  color: c5def5
+  description: Python source files

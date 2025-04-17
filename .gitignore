@@ -1,64 +1,86 @@
-# Virtual Environment
+# Git Ignore for Auton-OSINT
+
+# ─────────────────────────────────────────
+# Python Virtual Environments
 venv/
+.venv/
 env/
 ENV/
-.env
-.venv/
 pythonenv*/
+.Python
 
-# Python
+# Python Cache and Build Artifacts
 __pycache__/
 *.py[cod]
 *$py.class
 *.so
-.Python
+*.egg
+*.egg-info/
+.installed.cfg
+MANIFEST
+
+# Distribution / Packaging
 build/
-develop-eggs/
 dist/
-downloads/
-eggs/
 .eggs/
 lib/
 lib64/
 parts/
-sdist/
 var/
-wheels/
-*.egg-info/
-.installed.cfg
-*.egg
-MANIFEST
+*.wheels
+*.whl
+*.tar.gz
 
-# IDEs and editors
+# Logs, Databases, Reports
+*.log
+*.sqlite
+*.db
+coverage.xml
+htmlcov/
+*.cover
+
+# IDE & Editor Metadata
 .vscode/
 .idea/
-*.swp
-*.swo
-*~
+*.sublime-*
 .project
 .classpath
 .settings/
-*.sublime-workspace
-*.sublime-project
+*.swp
+*.swo
+*~
 
-# OS specific files
+# OS Files
 .DS_Store
-.DS_Store?
-._*
 .Spotlight-V100
 .Trashes
 ehthumbs.db
 Thumbs.db
 
-# Logs and databases
-*.log
-*.sqlite
-*.db
-
-# OSINT specific (may need customization)
+# Auton-OSINT Specific
+logs/
+data/outputs/
+data/visualizations/
+data/private/
+.last_run.json
+coverage-report/
+correlated_results.json
+config/secrets.yaml
 credentials/
 api_keys.txt
-*.token
 config.ini
-secrets.yaml
-data/private/
+
+# Docs Cache
+*.md.bak
+*.md.tmp
+
+# Temporary Files
+*.bak
+*.tmp
+*.orig
+
+# GitHub Actions Artifacts (optional)
+.github/workflows/*.log
+
+# Jupyter (if used later)
+.ipynb_checkpoints/

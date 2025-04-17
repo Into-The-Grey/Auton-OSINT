@@ -1,98 +1,157 @@
 # 🕵️ AUTON-OSINT
 
-**Auton-OSINT** is a free, lightweight, and modular open-source intelligence (OSINT) framework built for Linux. It provides deep reconnaissance using public sources, with optional Tor-based dark web scanning, no paid APIs, and robust correlation/visualization tools.
+[![CI](https://github.com/Into-The-Grey/Auton-OSINT/actions/workflows/ci.yml/badge.svg)](https://github.com/Into-The-Grey/Auton-OSINT/actions/workflows/ci.yml)
+[![Markdown Lint](https://github.com/Into-The-Grey/Auton-OSINT/actions/workflows/markdown-lint.yml/badge.svg)](https://github.com/Into-The-Grey/Auton-OSINT/actions/workflows/markdown-lint.yml)
+[![Project Board](https://img.shields.io/badge/Project-Board-blue?logo=github)](https://github.com/users/Into-The-Grey/projects/10)
+
+**Auton-OSINT** is a free, lightweight, and modular open-source intelligence (OSINT) framework for Linux. Designed for cybersecurity professionals, researchers, and enthusiasts, it provides deep reconnaissance using public sources, with optional Tor-based dark web scanning, no paid APIs, and a robust correlation/visualization engine.
 
 ---
 
 ## 🚀 Features
 
-- 📦 Modular design: Add/disable any module via config.
-- 🔍 Input types: Email, phone, username, domain, IP, real name, onion URLs.
-- 🌐 Tor/Darkweb support: Toggle integration for deeper investigations.
-- 📊 Graph-based correlation engine.
-- 🔐 Security: Rate limiting, secure mode, logging with config hash validation.
-- 🧠 Visualize: Export interactive HTML dashboards or run CLI-only.
-- 🧪 No paid APIs. Ever.
+- 📦 Modular design — add/disable modules via config
+- 🔍 Input types: Email, phone, username, domain, IP, real name, onion URLs
+- 🌐 Tor/Darkweb support for anonymous or deep scans
+- 📊 Graph-based correlation & relationship visualization
+- 🔐 Security-first: secure mode, config validation, rate limiting
+- 🧠 Headless or interactive CLI with optional HTML summary export
+- 🧪 No paid APIs — 100% open source intelligence
+
+### Features (Plain Text)
+
+- Modular design — add/disable modules via config
+- Input types: Email, phone, username, domain, IP, real name, onion URLs
+- Tor/Darkweb support for anonymous or deep scans
+- **Username Search** (via [Maigret](https://github.com/soxoj/maigret) for detailed profiling, with [Sherlock](https://github.com/sherlock-project/sherlock) as a fallback for username availability checks)
+- Security-first: secure mode, config validation, rate limiting
+- Headless or interactive CLI with optional HTML summary export
+- No paid APIs — 100% open source intelligence
 
 ---
 
-## 🧪 Supported Modules
+## ✅ Supported Modules
 
-- **Email Verification**
-- **Username Search** (Maigret, Sherlock fallback)
-- **Phone Lookup**
-- **Domain/IP Lookup**
-- **Real Name Discovery** (Social Media / Public Profiles)
-- **Darkweb .onion Scan** (Tor Integration)
+- **Email Verification** (MX, syntax, breach checks)
+- **Username Search** (via Maigret, Sherlock fallback)
+- **Phone Lookup** (NumVerify, PhoneInfoga)
+- **Domain/IP Lookup** (DNS, IPWhois, passive tools)
+- **Real Name Discovery** (Social media pattern-matching)
+- **.onion Scan** (Tor-enabled module scanner)
 
 ---
 
 ## 🛠️ Quick Start
 
 ```bash
-git clone https://github.com/Into_The_Grey/auton-osint.git
-cd auton-osint
+git clone https://github.com/Into-The-Grey/Auton-OSINT.git
+cd Auton-OSINT
+python3 -m venv venv && source venv/bin/activate
+pip install -r requirements.txt
 python3 main.py --help
 ```
 
 Example:
 
 ```bash
-python3 main.py "johnsmith1995" --headless --output-summary
+python3 main.py "johnsmith1995" --headless --output-summary json
+# Replace "johnsmith1995" with the username, email, or other input type you want to investigate.
 ```
 
 ---
 
-## 🔧 Configurable Settings
+## ⚙️ Configuration
 
-Stored in `config/modules_config/*.yaml`.
+Each module has its own YAML config in:
 
-Each module has:
+``` yaml
+config/modules_config/*.yaml
+```
 
-- Enable/disable toggle
-- Optional rate limiting
-- Source customization
-- Output format (`json`, `csv`)
+| Setting         | Description                     |
+|----------------|---------------------------------|
+| `enabled`       | Toggle module on/off            |
+| `rate_limit`    | Optional cooldown between calls |
+| `output_format` | Choose JSON, CSV, etc.          |
+| `use_tor`       | Respect global or module TOR    |
+
+Global config file: `config/main_config.yaml`
 
 ---
 
 ## 📁 Output Files
 
-| File                        | Description                             |
-|-----------------------------|-----------------------------------------|
-| `data/outputs/`             | Raw and parsed module output            |
-| `correlated_results.json`   | Unified correlation data                |
-| `graphs/`                   | Visual network graphs (if enabled)      |
-| `.last_run.json`            | Cached latest session                   |
-| `logs/`                     | Daily logs for review/auditing          |
+| Path                        | Description                              |
+|-----------------------------|------------------------------------------|
+| `data/outputs/`             | Individual module results                |
+| `data/correlated_results.json` | Normalized & cross-linked entity data |
+| `data/visualizations/`      | Graphs from `networkx`/`matplotlib`      |
+| `logs/`                     | Logs per run & per module                |
+| `.last_run.json`            | Cache of latest successful CLI run       |
 
 ---
 
-## ⚙️ Requirements
+## 🔒 Security & Requirements
 
 - Python 3.12+
-- Tor (for .onion scans)
+- Tor (system daemon or embedded client)
 - Git
-- Linux (Debian/Ubuntu recommended)
+- Ubuntu or Debian-based Linux (recommended)
+
+### Installation Instructions
+
+1. **Python 3.12+**: Install the latest version of Python from [python.org](https://www.python.org/downloads/) or use your package manager:
+
+   ```bash
+   sudo apt update && sudo apt install -y python3 python3-venv python3-pip
+   ```
+
+2. **Tor**: Install Tor using the following commands:
+
+   ```bash
+   sudo apt update && sudo apt install -y tor
+   sudo systemctl start tor
+   sudo systemctl enable tor
+   ```
+
+3. **Git**: Install Git with:
+
+   ```bash
+   sudo apt update && sudo apt install -y git
+   ```
+
+4. **Ubuntu/Debian-based Linux**: Ensure your system is up-to-date:
+
+   ```bash
+   sudo apt update && sudo apt upgrade -y
+   ```
 
 ---
 
-## 📌 Notes
+## 📦 Development & Automation
 
-- CLI-first design. Web interface is optional (planned).
-- No paid APIs used anywhere in the tool.
-- Safe defaults, but adjustable compliance levels available.
+- 📋 GitHub Project: [Auton-OSINT Dev Flow](https://github.com/users/Into-The-Grey/projects/10)
+- ✅ [CI Workflow](.github/workflows/ci.yml)
+- 📄 Auto Markdown Linting & Doc Hygiene
+- 🔄 Weekly dependency checks via Dependabot
+
+---
+
+## 📸 Demo Preview
+
+> Comming soon!
 
 ---
 
 ## ❤️ Credits
 
-Built with love by [Mr. Acord] and contributors. Inspired by SpiderFoot, simplified for real-world speed and focus.
+Built with 💻 by **[REDACTED]** and contributors.  
+Inspired by tools like SpiderFoot — reimagined with speed and simplicity.
 
 ---
 
 ## 📄 License
 
-MIT License. See [LICENSE](LICENSE) for details.
+**MIT License** — see [LICENSE](LICENSE) for full details.
 
 ---
