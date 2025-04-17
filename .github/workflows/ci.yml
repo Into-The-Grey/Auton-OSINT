@@ -2,16 +2,16 @@ name: CI Pipeline
 
 on:
   push:
-    branches: [ master ]  # Changed from main to master
+    branches: [ master ]
   pull_request:
-    branches: [ master ]  # Changed from main to master
+    branches: [ master ]
 
 jobs:
   test:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: [ "3.12", "3.11", "3.10" ]
+        python-version: [ "3.10", "3.11" ]  # You can re-add "3.12" once dependencies are verified
     permissions:
       contents: read
       pull-requests: write
@@ -19,18 +19,18 @@ jobs:
 
     steps:
       - name: Check out repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
 
       - name: Cache pip dependencies
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+          key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
           restore-keys: |
             ${{ runner.os }}-pip-
 
@@ -47,11 +47,11 @@ jobs:
       - name: Run tests with pytest
         run: |
           pip install pytest pytest-cov
-          pytest --maxfail=1 --disable-warnings -q --cov=. --cov-report=xml
+          pytest --maxfail=1 --disable-warnings --cov=. --cov-report=xml
 
-      - name: Upload test coverage artifact
+      - name: Upload coverage report
         if: always()
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: coverage-report
           path: coverage.xml
@@ -62,6 +62,6 @@ jobs:
         with:
           title: "❌ CI Failure in `${{ github.workflow }}`"
           body: |
-            Tests failed for commit `${{ github.sha }}` on `${{ github.ref_name }}`.
-            Please investigate the failure. Workflow: `${{ github.workflow }}`
+            Tests failed for commit `${{ github.sha }}` on branch `${{ github.ref_name }}`.
+            Please investigate the failure. Workflow: `${{ github.workflow }}`.
           labels: bug, auto-generated
