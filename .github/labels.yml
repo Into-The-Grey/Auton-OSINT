@@ -1,24 +1,59 @@
 - name: bug
   color: d73a4a
   description: Something isn't working
+
 - name: auto-generated
   color: cfd3d7
-  description: Created automatically by CI
+  description: Created automatically by CI or automation tools
+
 - name: reviewing
   color: 0366d6
   description: Under manual or automated review
+
 - name: approved
   color: 0e8a16
   description: Review or test passed
+
 - name: dependencies
   color: 7057ff
   description: Dependency updates
+
 - name: ci
   color: f9d0c4
-  description: Continuous Integration
+  description: CI/CD pipelines or automation
+
 - name: docs
   color: fef2c0
-  description: Documentation change
+  description: Documentation, markdown, or cheatsheet updates
+
 - name: python
   color: c5def5
-  description: Python source files
+  description: Python source files and logic
+
+- name: osint-modules
+  color: 0052cc
+  description: Changes to specific OSINT modules or configs
+
+- name: core-engine
+  color: 5319e7
+  description: Core engine logic or orchestration scripts
+
+- name: testing
+  color: d876e3
+  description: Unit tests, integration tests, or test coverage
+
+- name: enhancement
+  color: a2eeef
+  description: New feature or request
+
+- name: refactor
+  color: 8b949e
+  description: Code cleanup, reorg, or structural improvement
+
+- name: good first issue
+  color: 7057ff
+  description: Great for newcomers to start with
+
+- name: help wanted
+  color: 008672
+  description: Extra attention or community contribution needed

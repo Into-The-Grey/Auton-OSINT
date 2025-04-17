@@ -1,13 +1,31 @@
-# Auto-label pull requests by file path
-docs:
+# 🔖 Auto-label pull requests based on file path patterns
+
+documentation:
   - "*.md"
   - "docs/**"
+  - ".github/ISSUE_TEMPLATE/**"
+  - ".github/*.md"
 
 dependencies:
   - "requirements.txt"
+  - "pyproject.toml"
 
-ci:
+ci-cd:
   - ".github/workflows/**"
+  - ".github/labeler.yml"
+
+osint-modules:
+  - "modules/**"
+  - "config/modules_config/**"
+
+core-engine:
+  - "main.py"
+  - "input_parser.py"
+  - "correlation_engine.py"
+  - "visualization.py"
 
 python:
-  - "**.py"
+  - "**/*.py"
+
+testing:
+  - "tests/**"
