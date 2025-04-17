@@ -133,3 +133,4 @@ whois==1.20240129.2
 xhtml2pdf==0.2.17
 XMind==1.2.0
 yarl==1.19.0
+maigret @ git+https://github.com/soxoj/maigret.git

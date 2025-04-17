@@ -84,3 +84,6 @@ config.ini
 
 # Jupyter (if used later)
 .ipynb_checkpoints/
+
+# Additional Folder Exclusions
+tools/maigret/

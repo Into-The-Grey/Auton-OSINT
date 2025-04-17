@@ -26,13 +26,18 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
 
-      - name: Cache pip dependencies
+      - name: Get latest Maigret commit hash
+        id: maigret_ref
+        run: |
+          echo "SHA=$(git ls-remote https://github.com/soxoj/maigret.git HEAD | cut -f1)" >> $GITHUB_OUTPUT
+
+      - name: Cache pip dependencies (including Maigret)
         uses: actions/cache@v4
         with:
           path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
+          key: ${{ runner.os }}-pip-maigret-${{ steps.maigret_ref.outputs.SHA }}
           restore-keys: |
-            ${{ runner.os }}-pip-
+            ${{ runner.os }}-pip-maigret-
 
       - name: Install dependencies
         run: |
