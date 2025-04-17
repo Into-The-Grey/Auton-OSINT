@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: [ "3.10", "3.11" ]  # You can re-add "3.12" once dependencies are verified
+        python-version: [ "3.10", "3.11" ]
     permissions:
       contents: read
       pull-requests: write
@@ -48,6 +48,8 @@ jobs:
         run: |
           pip install pytest pytest-cov
           pytest --maxfail=1 --disable-warnings --cov=. --cov-report=xml
+          echo "📂 Listing files:"
+          ls -lah
 
       - name: Upload coverage report
         if: always()
@@ -65,3 +67,4 @@ jobs:
             Tests failed for commit `${{ github.sha }}` on branch `${{ github.ref_name }}`.
             Please investigate the failure. Workflow: `${{ github.workflow }}`.
           labels: bug, auto-generated
+          token: ${{ secrets.GITHUB_TOKEN }}
