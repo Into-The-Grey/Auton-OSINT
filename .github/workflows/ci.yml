@@ -65,7 +65,9 @@ jobs:
 
       - name: Create issue on test failure
         if: failure()
-        uses: dacbd/create-issue-action@v1
+        # Pinning to commit cdb57ab (v2)
+        uses: dacbd/create-issue-action@cdb57ab
+
         with:
           title: "❌ CI Failure in `${{ github.workflow }}`"
           body: |
