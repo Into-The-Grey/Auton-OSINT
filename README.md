@@ -143,6 +143,14 @@ Global config file: `config/main_config.yaml`
 
 ---
 
+## 🛡️ Contributing
+
+- We welcome contributions! Please read our [Contributing Guidelines](CONTRIBUTING.md) for details on how to get involved.
+
+- Be sure to check out our [Code of Conduct](CODE_OF_CONDUCT.md) to ensure a positive experience for everyone.
+
+---
+
 ## ❤️ Credits
 
 Built with 💻 by **[REDACTED]** and contributors.  

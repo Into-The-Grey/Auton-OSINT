@@ -1,0 +1,11 @@
+default: true
+
+MD013:  # Disable line-length warnings globally
+  line_length: 999  # Or 999 if you want to ignore entirely
+  code_blocks: false
+  tables: false
+
+MD007:  # Proper unordered list indentation
+  indent: 2
+
+MD032: true  # Keep this on — makes GitHub forms look clean
