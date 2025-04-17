@@ -1,7 +1,7 @@
 # 🕵️ AUTON-OSINT
 
 [![CI](https://github.com/Into-The-Grey/Auton-OSINT/actions/workflows/ci.yml/badge.svg)](https://github.com/Into-The-Grey/Auton-OSINT/actions/workflows/ci.yml)
-[![Markdown Lint](https://github.com/Into-The-Grey/Auton-OSINT/actions/workflows/markdown-lint.yml/badge.svg)](https://github.com/Into-The-Grey/Auton-OSINT/actions/workflows/markdown-lint.yml)
+[![Markdown Lint](https://github.com/Into-The-Grey/Auton-OSINT/actions/workflows/markdown-lint.yml/badge.svg?branch=master)](https://github.com/Into-The-Grey/Auton-OSINT/actions/workflows/markdown-lint.yml)
 [![Project Board](https://img.shields.io/badge/Project-Board-blue?logo=github)](https://github.com/users/Into-The-Grey/projects/10)
 
 **Auton-OSINT** is a free, lightweight, and modular open-source intelligence (OSINT) framework for Linux. Designed for cybersecurity professionals, researchers, and enthusiasts, it provides deep reconnaissance using public sources, with optional Tor-based dark web scanning, no paid APIs, and a robust correlation/visualization engine.
