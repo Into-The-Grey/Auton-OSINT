@@ -24,6 +24,7 @@ PATTERNS = {
     "username": re.compile(r"^@?[A-Za-z0-9_.\-]{3,}$"),
 }
 
+
 def detect_input_type(item: str) -> Optional[str]:
     """
     Returns one of PATTERNS keys or None.
@@ -32,6 +33,7 @@ def detect_input_type(item: str) -> Optional[str]:
         if rx.fullmatch(item):
             return t
     return None
+
 
 def split_items(field: str) -> list:
     """
@@ -83,6 +85,12 @@ def main(override_flags=None):
             "--discriminator", help="Optional tag (e.g. Discord#1234 → 1234)"
         )
         parser.add_argument("--target", help="Force domain or IP lookup")
+        parser.add_argument(
+            "--graph-output",
+            choices=["png", "html", "both"],
+            default="both",
+            help="Choose output format for correlation graphs",
+        )
 
         args = parser.parse_args()
 
