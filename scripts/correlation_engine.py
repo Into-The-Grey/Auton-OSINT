@@ -5,6 +5,7 @@ from collections import defaultdict
 
 OUTPUT_DIR = Path(__file__).parents[1] / "data/outputs"
 CORRELATED_OUTPUT = Path(__file__).parents[1] / "data/correlated_results.json"
+STATE_FILE = Path(__file__).parents[1] / "data/.corr_state.json"
 
 
 def load_all_outputs():
@@ -20,30 +21,57 @@ def load_all_outputs():
 
 
 def correlate_data(target_file=None):
-    entries = []
-
+    # Gather entries
     if target_file:
+        entries = []
         target_path = Path(target_file)
         if target_path.exists():
             with open(target_path, "r") as f:
                 data = json.load(f)
-                entries.append({"filename": target_path.name, "data": data})
+            entries.append({"filename": target_path.name, "data": data})
         else:
             print(f"Specified file does not exist: {target_file}")
             return
     else:
         entries = load_all_outputs()
 
-    print(f"Loaded {len(entries)} data entries for correlation.")
+    # Sort for deterministic order
+    entries.sort(key=lambda e: e["filename"])
 
-    phone_map = defaultdict(list)
-    breach_map = defaultdict(set)
-    username_map = defaultdict(set)
-    domain_map = defaultdict(set)
-    ip_map = defaultdict(set)
+    # Load or initialize state
+    if STATE_FILE.exists():
+        with open(STATE_FILE, "r") as sf:
+            state = json.load(sf)
+        last_processed = state.get("last")
+        phone_map = defaultdict(list, state.get("phone_map", {}))
+        breach_map = defaultdict(
+            set, {k: set(v) for k, v in state.get("breach_map", {}).items()}
+        )
+        username_map = defaultdict(
+            set, {k: set(v) for k, v in state.get("username_map", {}).items()}
+        )
+        domain_map = defaultdict(
+            set, {k: set(v) for k, v in state.get("domain_map", {}).items()}
+        )
+        ip_map = defaultdict(
+            set, {k: set(v) for k, v in state.get("ip_map", {}).items()}
+        )
+        print(f"Resuming correlation from: {last_processed}")
+    else:
+        last_processed = None
+        phone_map = defaultdict(list)
+        breach_map = defaultdict(set)
+        username_map = defaultdict(set)
+        domain_map = defaultdict(set)
+        ip_map = defaultdict(set)
+        print(f"Loaded {len(entries)} data entries for correlation.")
 
+    # Process each entry
     for entry in entries:
         fname = entry["filename"]
+        if last_processed and fname <= last_processed:
+            continue  # skip already‑processed
+
         data = entry["data"]
 
         # Phone number matching
@@ -77,7 +105,23 @@ def correlate_data(target_file=None):
         if ip:
             ip_map[ip].add(fname)
 
-    # Only keep correlated (multi-source) matches
+        # Checkpoint state after each file
+        last_processed = fname
+        with open(STATE_FILE, "w") as sf:
+            json.dump(
+                {
+                    "last": last_processed,
+                    "phone_map": dict(phone_map),
+                    "breach_map": {k: list(v) for k, v in breach_map.items()},
+                    "username_map": {k: list(v) for k, v in username_map.items()},
+                    "domain_map": {k: list(v) for k, v in domain_map.items()},
+                    "ip_map": {k: list(v) for k, v in ip_map.items()},
+                },
+                sf,
+                indent=2,
+            )
+
+    # Build only truly correlated results
     correlated_phones = {k: v for k, v in phone_map.items() if len(v) > 1}
     correlated_breaches = {k: list(v) for k, v in breach_map.items() if len(v) > 1}
     correlated_usernames = {k: list(v) for k, v in username_map.items() if len(v) > 1}
@@ -92,11 +136,17 @@ def correlate_data(target_file=None):
         "ips": correlated_ips,
     }
 
+    # Write final correlated output
     with open(CORRELATED_OUTPUT, "w") as f:
         json.dump(result, f, indent=4)
-
     print(f"Correlations written to {CORRELATED_OUTPUT}")
     print(json.dumps(result, indent=4))
+
+    # Clean up state so next run starts fresh
+    try:
+        STATE_FILE.unlink()
+    except FileNotFoundError:
+        pass
 
 
 if __name__ == "__main__":

@@ -1,5 +1,9 @@
+#!/usr/bin/env python3
 import argparse
 import re
+import logging
+from typing import Optional
+
 from modules.phone_lookup.phone_lookup import phone_lookup
 from modules.email_verification.email_verification import verify_email
 from modules.username_search.username_search import search_username
@@ -8,24 +12,39 @@ from modules.domain_ip_lookup.domain_ip_lookup import domain_ip_lookup
 from scripts.correlation_engine import correlate_data
 from scripts.visualization import visualize_correlations
 
+logger = logging.getLogger("input_parser")
 
-def detect_input_type(raw_input):
-    if re.fullmatch(r"\+?\d[\d\s\-().]+", raw_input):  # phone
-        return "phone"
-    elif re.fullmatch(r"[^@]+@[^@]+\.[^@]+", raw_input):  # email
-        return "email"
-    elif re.fullmatch(r"^(?:(?:[0-9]{1,3}\.){3}[0-9]{1,3})$", raw_input):  # IP
-        return "ip"
-    elif re.fullmatch(r"[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}", raw_input):  # domain
-        return "domain"
-    elif re.fullmatch(r"@[a-zA-Z0-9_]+", raw_input):  # @username
-        return "username"
-    elif re.fullmatch(r"[a-zA-Z0-9_.-]{3,}", raw_input):  # fallback username
-        return "username"
+# ————————————————————————————————————————
+# Centralize your patterns here
+PATTERNS = {
+    "phone": re.compile(r"^\+?\d[\d\s\-\(\)\.]+$"),
+    "email": re.compile(r"^[^@]+@[^@]+\.[^@]+$"),
+    "ip": re.compile(r"^(?:\d{1,3}\.){3}\d{1,3}$"),
+    "domain": re.compile(r"^[A-Za-z0-9\.\-]+\.[A-Za-z]{2,}$"),
+    "username": re.compile(r"^@?[A-Za-z0-9_.\-]{3,}$"),
+}
+
+def detect_input_type(item: str) -> Optional[str]:
+    """
+    Returns one of PATTERNS keys or None.
+    """
+    for t, rx in PATTERNS.items():
+        if rx.fullmatch(item):
+            return t
     return None
+
+def split_items(field: str) -> list:
+    """
+    Split comma-separated strings and strip whitespace.
+    """
+    return [x.strip() for x in field.split(",") if x.strip()]
 
 
 def main(override_flags=None):
+    """
+    If override_flags is a Namespace, skip argparse;
+    otherwise, parse CLI exactly as before.
+    """
     if override_flags:
         args = override_flags
     else:
@@ -35,7 +54,7 @@ def main(override_flags=None):
 📌 Syntax Guide (no flags needed):
   +1234567890         → Phone number
   user@example.com    → Email address
-  @someuser           → Username (Twitter/Discord-style)
+  @someuser           → Username
   someuser            → Username (generic)
   8.8.8.8             → IP address
   example.com         → Domain name
@@ -44,8 +63,8 @@ def main(override_flags=None):
   -p / --phone        → Force phone lookup
   -e / --email        → Force email check
   -u / --username     → Force username search
-  --user-id           → Provide numeric platform ID (e.g. Facebook, Yelp)
-  --discriminator     → Optional tag/discriminator (e.g. Discord#1234 → 1234)
+  --user-id           → Optional numeric ID
+  --discriminator     → Optional tag/discriminator
   --target            → Force domain or IP lookup
 """,
             formatter_class=argparse.RawTextHelpFormatter,
@@ -54,78 +73,93 @@ def main(override_flags=None):
         parser.add_argument(
             "input", nargs="?", help="Quick input (phone/email/username/domain/IP)"
         )
+        parser.add_argument("-p", "--phone", help="Phone number to lookup")
+        parser.add_argument("-e", "--email", help="Email address to verify")
         parser.add_argument(
-            "-p", "--phone", help="Phone number to lookup (e.g. +15551234567)"
+            "-u", "--username", help="Username to scan across platforms"
         )
-        parser.add_argument(
-            "-e", "--email", help="Email address to verify (e.g. test@domain.com)"
-        )
-        parser.add_argument(
-            "-u", "--username", help="Username to scan across platforms (e.g. johndoe)"
-        )
-        parser.add_argument(
-            "--user-id", help="Optional user ID (used by Facebook, Vimeo, etc.)"
-        )
+        parser.add_argument("--user-id", help="Optional platform-specific ID")
         parser.add_argument(
             "--discriminator", help="Optional tag (e.g. Discord#1234 → 1234)"
         )
-        parser.add_argument(
-            "--target", help="Domain or IP address (e.g. example.com or 8.8.8.8)"
-        )
+        parser.add_argument("--target", help="Force domain or IP lookup")
 
         args = parser.parse_args()
 
-    # === Dynamic Input ===
-    if args.input:
-        detected = detect_input_type(args.input)
-        if detected == "phone":
-            args.phone = args.input
-        elif detected == "email":
-            args.email = args.input
-        elif detected == "username":
-            args.username = args.input
-        elif detected in ["domain", "ip"]:
-            args.target = args.input
+    # — Build a dict of lists for each category
+    buckets = {t: [] for t in PATTERNS}
 
-    # === Phone Lookup ===
-    if args.phone:
-        print(f"📞 Phone lookup for: {args.phone}")
-        result = phone_lookup(args.phone)
-        print("✅ Lookup complete." if result else "❌ Lookup failed.")
+    # 1) Flagged inputs (allow comma‑lists)
+    if getattr(args, "phone", None):
+        buckets["phone"].extend(split_items(args.phone))
+    if getattr(args, "email", None):
+        buckets["email"].extend(split_items(args.email))
+    if getattr(args, "username", None):
+        buckets["username"].extend(split_items(args.username))
+    if getattr(args, "target", None):
+        for item in split_items(args.target):
+            cat = detect_input_type(item)
+            if cat in ("domain", "ip"):
+                buckets[cat].append(item)
+            else:
+                logger.error(f"Ignoring invalid target: {item}")
 
-    # === Email Verification ===
-    if args.email:
-        print(f"📧 Email verification: {args.email}")
-        result = verify_email(args.email)
-        print("✅ Verification complete." if result else "❌ Verification failed.")
+    # 2) Bare “input” (also comma‑lists)
+    if getattr(args, "input", None):
+        for item in split_items(args.input):
+            cat = detect_input_type(item)
+            if cat in ("phone", "email", "username"):
+                buckets[cat].append(item.lstrip("@") if cat == "username" else item)
+            elif cat in ("domain", "ip"):
+                # domain/ip both feed into domain_ip_lookup
+                buckets[cat].append(item)
+            else:
+                logger.error(f"Could not classify input: {item}")
 
-    # === Username + Social Media ===
-    if args.username:
-        print(f"🔎 Username search for: {args.username}")
-        result = search_username(args.username)
-        print("✅ Username search complete.")
+    # If nothing to do, bail early
+    if not any(buckets.values()):
+        print("⚠️ No valid inputs detected. Use `--help`.")
+        return
 
-        print(f"🌐 Running social media discovery for: {args.username}")
+    # ————————————————————————————————————————
+    # Dispatch to each module
+    # PHONE
+    for num in buckets["phone"]:
+        logger.info(f"Dispatch phone_lookup → {num}")
+        print(f"📞 Phone lookup: {num}")
+        phone_lookup(num)
+        print("✅ Done.\n")
+
+    # EMAIL
+    for addr in buckets["email"]:
+        logger.info(f"Dispatch verify_email → {addr}")
+        print(f"📧 Email verify: {addr}")
+        verify_email(addr)
+        print("✅ Done.\n")
+
+    # USERNAME + SOCIAL + CORRELATE & VIS
+    for usr in buckets["username"]:
+        logger.info(f"Dispatch search_username → {usr}")
+        print(f"🔎 Username search: {usr}")
+        search_username(usr)
+        print("✅ Done.")
+
+        print(f"🌐 Social discovery: {usr}")
         social_discovery(
-            args.username, user_id=args.user_id, discriminator=args.discriminator
+            usr,
+            user_id=getattr(args, "user_id", None),
+            discriminator=getattr(args, "discriminator", None),
         )
-        print("✅ Social discovery complete.")
+        print("✅ Done.\n")
 
-        print("📊 Running correlation & visualization...")
+        print("📊 Correlating & visualizing…")
         correlate_data()
         visualize_correlations()
-        print("✅ All processing complete.")
+        print("✅ All processing complete.\n")
 
-    # === Domain/IP Lookup ===
-    if args.target:
-        print(f"🌍 Domain/IP analysis for: {args.target}")
-        result = domain_ip_lookup(args.target)
-        print(f"✅ Lookup complete. Results saved to {result}")
-
-    # === No Input ===
-    if not any([args.phone, args.email, args.username, args.target]):
-        print("⚠️ No input detected. Use `--help` for usage examples.")
-
-
-if __name__ == "__main__":
-    main()
+    # DOMAIN & IP (same module)
+    for host in buckets["domain"] + buckets["ip"]:
+        logger.info(f"Dispatch domain_ip_lookup → {host}")
+        print(f"🌍 Domain/IP lookup: {host}")
+        domain_ip_lookup(host)
+        print("✅ Done.\n")

@@ -4,12 +4,20 @@ import matplotlib.pyplot as plt
 from pathlib import Path
 from datetime import datetime
 
+try:
+    from pyvis.network import Network
+
+    HAS_PYVIS = True
+except ImportError:
+    HAS_PYVIS = False
+
 CORRELATED_PATH = Path(__file__).parents[1] / "data/correlated_results.json"
 VISUAL_OUT_DIR = Path(__file__).parents[1] / "data/visualizations"
 VISUAL_OUT_DIR.mkdir(exist_ok=True)
 
 
 def visualize_correlations():
+    # Build the graph
     G = nx.Graph()
 
     # Load correlation results
@@ -80,7 +88,7 @@ def visualize_correlations():
             else:
                 node_colors.append("lightgray")
 
-    # Draw graph
+    # Draw static PNG
     plt.figure(figsize=(16, 12), constrained_layout=True)
     nx.draw(
         G,
@@ -93,13 +101,30 @@ def visualize_correlations():
     )
     plt.title("Auton-OSINT Correlation Graph")
 
-    # Save PNG
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     img_path = VISUAL_OUT_DIR / f"correlation_graph_{timestamp}.png"
     plt.savefig(img_path, dpi=300)
     print(f"Graph saved to {img_path}")
-
     plt.show()
+
+    # Draw interactive HTML (if pyvis is available)
+    if HAS_PYVIS:
+        net = Network(height="100%", width="100%")
+        for node, attrs in G.nodes(data=True):
+            net.add_node(
+                node,
+                label=node,
+                title=node,
+                group=attrs.get("type"),
+                value=G.degree(node), # type: ignore
+            )
+        for u, v in G.edges():
+            net.add_edge(u, v)
+        html_path = VISUAL_OUT_DIR / f"correlation_graph_{timestamp}.html"
+        net.show(html_path)
+        print(f"Interactive graph saved to {html_path}")
+    else:
+        print("pyvis not installed; skipping interactive HTML export")
 
 
 if __name__ == "__main__":
