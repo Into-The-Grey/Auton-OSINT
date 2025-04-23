@@ -5,7 +5,7 @@ from datetime import datetime
 from pathlib import Path
 
 # Load Configurations
-CONFIG_PATH = Path(__file__).parents[1] / "config/modules_config/darkweb_config.yaml"
+CONFIG_PATH = "config/modules_config/darkweb_config.yaml"
 with open(CONFIG_PATH, "r") as file:
     config = yaml.safe_load(file)
 
