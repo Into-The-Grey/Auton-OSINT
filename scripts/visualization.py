@@ -116,7 +116,7 @@ def visualize_correlations():
                 label=node,
                 title=node,
                 group=attrs.get("type"),
-                value=G.degree(node), # type: ignore
+                value=nx.degree(G, node),
             )
         for u, v in G.edges():
             net.add_edge(u, v)
