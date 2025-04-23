@@ -1,0 +1,4 @@
+tor_proxy: "socks5h://127.0.0.1:9050"
+darksearch_api_key: "YOUR_DARKSEARCH_API_KEY"
+query_limit: 20
+timeout: 60

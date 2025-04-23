@@ -56,6 +56,12 @@ def correlate_data(target_file=None):
         ip_map = defaultdict(
             set, {k: set(v) for k, v in state.get("ip_map", {}).items()}
         )
+        darkweb_keywords = defaultdict(
+            set, {k: set(v) for k, v in state.get("darkweb_keywords", {}).items()}
+        )
+        darkweb_sites = defaultdict(
+            set, {k: set(v) for k, v in state.get("darkweb_sites", {}).items()}
+        )
         print(f"Resuming correlation from: {last_processed}")
     else:
         last_processed = None
@@ -64,13 +70,15 @@ def correlate_data(target_file=None):
         username_map = defaultdict(set)
         domain_map = defaultdict(set)
         ip_map = defaultdict(set)
+        darkweb_keywords = defaultdict(set)
+        darkweb_sites = defaultdict(set)
         print(f"Loaded {len(entries)} data entries for correlation.")
 
     # Process each entry
     for entry in entries:
         fname = entry["filename"]
         if last_processed and fname <= last_processed:
-            continue  # skip already‑processed
+            continue  # Skip already‑processed
 
         data = entry["data"]
 
@@ -105,6 +113,20 @@ def correlate_data(target_file=None):
         if ip:
             ip_map[ip].add(fname)
 
+        # Darkweb correlation (NEW integration)
+        if data.get("source") == "darkweb":
+            keyword = data.get("keyword")
+            if keyword:
+                darkweb_keywords[keyword].add(fname)
+
+            for result_set in ["darksearch", "torbot"]:
+                results = data.get(result_set, [])
+                if isinstance(results, list):
+                    for result in results:
+                        link = result.get("link")
+                        if link:
+                            darkweb_sites[link].add(fname)
+
         # Checkpoint state after each file
         last_processed = fname
         with open(STATE_FILE, "w") as sf:
@@ -116,17 +138,27 @@ def correlate_data(target_file=None):
                     "username_map": {k: list(v) for k, v in username_map.items()},
                     "domain_map": {k: list(v) for k, v in domain_map.items()},
                     "ip_map": {k: list(v) for k, v in ip_map.items()},
+                    "darkweb_keywords": {
+                        k: list(v) for k, v in darkweb_keywords.items()
+                    },
+                    "darkweb_sites": {k: list(v) for k, v in darkweb_sites.items()},
                 },
                 sf,
                 indent=2,
             )
 
-    # Build only truly correlated results
+    # Filter only truly correlated results
     correlated_phones = {k: v for k, v in phone_map.items() if len(v) > 1}
     correlated_breaches = {k: list(v) for k, v in breach_map.items() if len(v) > 1}
     correlated_usernames = {k: list(v) for k, v in username_map.items() if len(v) > 1}
     correlated_domains = {k: list(v) for k, v in domain_map.items() if len(v) > 1}
     correlated_ips = {k: list(v) for k, v in ip_map.items() if len(v) > 1}
+    correlated_darkweb_keywords = {
+        k: list(v) for k, v in darkweb_keywords.items() if len(v) > 1
+    }
+    correlated_darkweb_sites = {
+        k: list(v) for k, v in darkweb_sites.items() if len(v) > 1
+    }
 
     result = {
         "phones": correlated_phones,
@@ -134,6 +166,8 @@ def correlate_data(target_file=None):
         "usernames": correlated_usernames,
         "domains": correlated_domains,
         "ips": correlated_ips,
+        "darkweb_keywords": correlated_darkweb_keywords,
+        "darkweb_sites": correlated_darkweb_sites,
     }
 
     # Write final correlated output
@@ -142,7 +176,7 @@ def correlate_data(target_file=None):
     print(f"Correlations written to {CORRELATED_OUTPUT}")
     print(json.dumps(result, indent=4))
 
-    # Clean up state so next run starts fresh
+    # Clean up state for fresh next run
     try:
         STATE_FILE.unlink()
     except FileNotFoundError:
