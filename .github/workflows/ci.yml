@@ -51,6 +51,7 @@ jobs:
 
       - name: Run tests with pytest
         run: |
+          export PYTHONPATH=$PYTHONPATH:$(pwd)
           pip install pytest pytest-cov
           pytest --maxfail=1 --disable-warnings --cov=. --cov-report=xml
           echo "📂 Listing files:"
