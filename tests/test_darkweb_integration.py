@@ -1,5 +1,5 @@
 import pytest
-from modules.darkweb_integration import search_darksearch, torbot_crawl, darkweb_lookup
+from modules.darkweb.darkweb_integration import search_darksearch, torbot_crawl, darkweb_lookup
 
 
 @pytest.fixture
