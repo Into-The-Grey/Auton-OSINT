@@ -87,3 +87,4 @@ config.ini
 
 # Additional Folder Exclusions
 tools/maigret/
+project_tree.md
